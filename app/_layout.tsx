@@ -1,5 +1,4 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -44,27 +43,25 @@ if(loaded){
   //get user by token
   setTimeout(()=>{
 setFinished(true);
-  },6000)
+  },1000)
 }
 },[loaded])
 
   if (!loaded) {
     return null;
   }
-
   return <RootLayoutNav />;
 }
-
 function RootLayoutNav() {
-
   return (
     <SafeAreaProvider>
-<SafeAreaView style={{flex:1}}>
-      <Stack screenOptions={{headerShown:false}}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <SafeAreaView style={{flex:1}}>
+       <Stack screenOptions={{headerShown:false}}>
+         <Stack.Screen name="screens/init" options={{ headerShown: false }} />
+         <Stack.Screen name="screens/login" options={{ headerShown: false }} />
+         <Stack.Screen name="screens/signup" options={{ headerShown: false }} />
+        </Stack>
       </SafeAreaView>
     </SafeAreaProvider>
-
   );
 }
