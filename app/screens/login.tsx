@@ -14,7 +14,9 @@ export default function LoginScreen({ navigation }:{navigation:any}) {
       <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#aaa" />
       <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity onPress={()=>{
+        router.push("/(tabs)")
+      }} style={styles.button}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
 
