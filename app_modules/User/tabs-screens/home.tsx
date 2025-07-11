@@ -5,6 +5,7 @@ import Services from '../components/home/services'
 import BR from '@/utils/BR'
 import HomeWalletCard from '../components/home-wallet-card'
 import { screenPadding } from '@/glob/style'
+import Jobs from '../components/home/jobs'
 
 const Home = () => {
   return (
@@ -20,6 +21,11 @@ const Home = () => {
 
 <View style={{padding:screenPadding}}>
 <Services/>
+</View>
+
+<View style={{padding:screenPadding}}>
+
+<Jobs/>
 </View>
     </View>
       
