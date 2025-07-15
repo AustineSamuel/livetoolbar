@@ -3,8 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-nativ
 import { Ionicons, AntDesign } from "@expo/vector-icons"; // for social icons
 import { router } from "expo-router";
 import colors from "@/constants/Colors";
+import { useDispatch } from "react-redux";
+import { showNotification } from "@/store/notificationSlice";
 
 export default function LoginScreen({ navigation }:{navigation:any}) {
+  const dispatch=useDispatch();
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>LiveToolBar</Text>
@@ -15,7 +18,9 @@ export default function LoginScreen({ navigation }:{navigation:any}) {
       <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />
 
       <TouchableOpacity onPress={()=>{
-        router.push("/(tabs)")
+        // router.push("/(tabs)")
+  dispatch(showNotification({ message: 'Login successful!', type: 'success' }));
+
       }} style={styles.button}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>

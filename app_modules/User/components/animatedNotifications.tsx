@@ -19,7 +19,9 @@ export default function AnimatedNotification() {
 
   const insets = useSafeAreaInsets();
   const translateY = useSharedValue(-150);
-
+const hide=()=>{
+ dispatch(hideNotification())
+}
   useEffect(() => {
     if (visible) {
       translateY.value = withTiming(0, { duration: 500 }, (finished) => {
@@ -28,7 +30,7 @@ export default function AnimatedNotification() {
             3000,
             withTiming(-150, { duration: 500 }, (done) => {
               if (done) {
-                runOnJS(() => dispatch(hideNotification()))();
+                runOnJS(hide)();
               }
             })
           );
@@ -73,5 +75,6 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
     fontWeight: 'bold',
+    textAlign:"left"
   },
 });
