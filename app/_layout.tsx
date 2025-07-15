@@ -4,9 +4,10 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
-
+import { Provider } from 'react-redux';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-
+import { store } from '@/store';
+import AnimatedNotification from '@/app_modules/User/components/animatedNotifications';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -45,17 +46,18 @@ if(loaded){
 setFinished(true);
   },1000)
 }
-},[loaded])
-
+},[loaded]);
   if (!loaded) {
     return null;
   }
   return <RootLayoutNav />;
 }
 function RootLayoutNav() {
-  return (
+  return (<>
+  <Provider store={store}>
     <SafeAreaProvider>
       <SafeAreaView style={{flex:1}}>
+    <AnimatedNotification />
        <Stack screenOptions={{headerShown:false}}>
          <Stack.Screen name="screens/init" options={{ headerShown: false }} />
          <Stack.Screen name="screens/login" options={{ headerShown: false }} />
@@ -63,5 +65,7 @@ function RootLayoutNav() {
         </Stack>
       </SafeAreaView>
     </SafeAreaProvider>
+    </Provider>
+</>
   );
 }

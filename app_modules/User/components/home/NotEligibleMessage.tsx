@@ -1,11 +1,42 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import globStyle from '@/glob/style';
 import { formatToNaira } from '../../../../Logics/date';
 import colors from '@/constants/Colors';
 import MyButton from '@/utils/button';
+import { getErrorMessage } from '@/utils/getErrorMesage';
+import { docQr } from '@/Logics/docQr';
+import { useDispatch } from 'react-redux';
+import { showNotification } from '@/store/notificationSlice';
 
 const NotEligibleMessage = () => {
+  const [register,setRegister]=useState<boolean>(false);
+  const [working,setWorking]=useState<boolean>(false);
+  const [error,setError]=useState<string>("");
+  const dispatch=useDispatch();
+  const registerUserToSeeJobs=async ()=>{
+try{
+//add users to see jobs list
+  dispatch(showNotification({ message: 'Action successful!', type: 'success' }));
+
+const exist=await docQr("users-to-jobs",{
+
+});
+if(exist?.length == 0 ){
+  console.log("should add users")
+}
+else{
+  //end.
+}
+}
+catch(err:any){
+setError(getErrorMessage(err))
+}
+finally{
+  setWorking(false);
+}
+  }
+
   return (
     <View style={styles.container}>
       <View style={[globStyle.flexItem, globStyle.alignCenter, globStyle.justifyCenter]}>
@@ -19,7 +50,7 @@ const NotEligibleMessage = () => {
         Dear user, you are not eligible to view and apply for available job offers here.{"\n\n"}
         Kindly register as a job seeker at the rate of <Text style={styles.highlight}>{formatToNaira(1500,true)}</Text>.
       </Text>
-      <MyButton textStyle={{color:colors?.black}} label='Register now' style={{backgroundColor:colors?.primaryColor,borderRadius:30}}></MyButton>
+      <MyButton  onPress={()=>registerUserToSeeJobs()} textStyle={{color:colors?.black}} label={working ? "Please wait...":'Register now'} style={{backgroundColor:colors?.primaryColor,borderRadius:30,opacity:working ? 0.5:1}}></MyButton>
     </View>
   );
 };
