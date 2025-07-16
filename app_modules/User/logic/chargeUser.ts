@@ -41,7 +41,7 @@ const updatedUserEvent=await updateData("Users",user?.docId||"",{
 })
 
       return {
-        user,
+        user:updatedUser,
       };
     } else {
       return {

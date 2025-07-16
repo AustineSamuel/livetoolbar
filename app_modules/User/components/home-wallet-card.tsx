@@ -5,12 +5,12 @@ import globStyle from '@/glob/style';
 import { formatToNaira } from '@/Logics/date';
 import { LinearGradient } from 'expo-linear-gradient';
 import colors from '@/constants/Colors';
+import useUser from '@/hooks/useUser';
 
 const HomeWalletCard: React.FC = () => {
   const [showBalance, setShowBalance] = useState(true);
-
-  const balance = 3200.50; // Example balance
-
+const user=useUser()
+  const balance =user?.balance||0; // Example balance
   return (
     <LinearGradient
         colors={['rgba(0,0,0,0.8)', colors.primaryColor]}

@@ -38,11 +38,10 @@ const [loading,setLoading]=useState<boolean>(false);
                   value:password
                 }
               ]
-            });
+            })
             const searchByEmailUser=searchByEmail?.[0];
-            console.log(searchByEmailUser,typeof searchByEmailUser);
 if(searchByEmailUser && searchByEmailUser!==undefined){
-  dispatch(setUser(searchByEmailUser))
+  dispatch(setUser(searchByEmailUser));
   await AsyncStorage.setItem("User",JSON.stringify(searchByEmailUser))
   dispatch(showNotification({
     message:"Login successful",
@@ -70,7 +69,7 @@ if(searchByEmailUser && searchByEmailUser!==undefined){
 if(searchByUsernameUser && searchByUsernameUser!==undefined){
 
   dispatch(setUser(searchByUsernameUser))
-  await AsyncStorage.setItem("User",JSON.stringify(searchByUsername));
+  await AsyncStorage.setItem("User",JSON.stringify(searchByUsernameUser))
   dispatch(showNotification({
     message:"Login successful",
     type:"success"

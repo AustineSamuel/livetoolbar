@@ -12,6 +12,10 @@ import useUser from '@/hooks/useUser';
 import chargeUser from '../../logic/chargeUser';
 import { AddData } from '@/Logics/addData';
 import { getCurrentTimestamp } from '@/Logics/DateFunc';
+import { collection } from 'firebase/firestore';
+import { db } from '@/firebase.config';
+import { setUser } from '@/store/slices';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NotEligibleMessage = () => {
   const [register,setRegister]=useState<boolean>(false);
@@ -22,7 +26,7 @@ const NotEligibleMessage = () => {
   const registerUserToSeeJobs=async ()=>{
 try{
 //add users to see jobs list
-
+setWorking(true);
 const exist=await docQr("users-to-jobs",{
 whereClauses:[
   {
@@ -36,12 +40,14 @@ if(exist?.length == 0 ){
   // console.log("should add users")
   // chargeUser and add user
 const res=  await chargeUser(1500,user?.userId||"");
-if(res?.error)dispatch(showNotification({message:res?.error,type:"error"}))
-const res1=await AddData("users-to-jobs",{
+if(res?.error)return dispatch(showNotification({message:res?.error,type:"error"}))
+dispatch(setUser(res?.user));
+const res1=await AddData(collection(db,"users-to-jobs"),{
 userId:user?.userId,
 addedAt:getCurrentTimestamp(),
 paid:true
 })
+AsyncStorage.setItem("User",JSON.stringify(res?.user));
 dispatch(showNotification({
   "message":"Job registration successful",
   type:"success"
@@ -51,7 +57,7 @@ dispatch(showNotification({
 else{
  dispatch(showNotification({
   "message":"Registration already exist",
-  type:"success"
+  type:"error"
 }))
 }
 }
@@ -80,7 +86,7 @@ finally{
         Dear user, you are not eligible to view and apply for available job offers here.{"\n\n"}
         Kindly register as a job seeker at the rate of <Text style={styles.highlight}>{formatToNaira(1500,true)}</Text>.
       </Text>
-      <MyButton  onPress={()=>registerUserToSeeJobs()} textStyle={{color:colors?.black}} label={working ? "Please wait...":'Register now'} style={{backgroundColor:colors?.primaryColor,borderRadius:30,opacity:working ? 0.5:1}}></MyButton>
+      <MyButton  onPress={()=>registerUserToSeeJobs()} textStyle={{color:colors?.black,opacity:working ? 0.7:1}} label={working ? "Please wait...":'Register now'} style={{backgroundColor:colors?.primaryColor,borderRadius:30,opacity:working ? 0.5:1}}></MyButton>
     </View>
   );
 };

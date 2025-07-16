@@ -6,22 +6,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUser } from "@/store/slices";
 const useUser=()=>{
     const [user,setUser_]=useState<User>()
-const props=useSelector((root:{app:any})=>root.app?.user);
+const props=useSelector((root:{app:any})=>root.app);
 const dispatch=useDispatch();
 useEffect(()=>{
 if(props?.user)setUser_(props?.user);
 },[props?.user]);
-
-
-useEffect(()=>{
-(async ()=>{
-if(!props?.user){
-    const user=parse((await AsyncStorage.getItem('user')||"{}"));
-    setUser_(user);
-    dispatch(setUser(user));
-}
-})();
-},[])
+console.log(props?.user);
+// useEffect(()=>{
+// (async ()=>{
+// if(!props?.user){
+//     const user=parse((await AsyncStorage.getItem('user')||"null"));
+//     setUser_(user);
+//     dispatch(setUser(user));
+// }
+// })();
+// },[])
 return user;
 }
 
