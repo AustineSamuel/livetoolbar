@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import globStyle from '@/glob/style';
 import { formatToNaira } from '../../../../Logics/date';
 import colors from '@/constants/Colors';
@@ -52,7 +52,7 @@ dispatch(showNotification({
   "message":"Job registration successful",
   type:"success"
 }));
-
+setRegister(true);
 }
 else{
  dispatch(showNotification({
@@ -73,6 +73,25 @@ finally{
 }
   }
 
+
+  useEffect(()=>{
+    (async ()=>{
+      const res=await docQr("users-to-jobs",{
+        whereClauses:[
+          {
+            field:"userId",
+            operator:"==",
+            value:user?.userId
+          }
+        ]
+      });
+setRegister((res?.[0]) ? true:false)
+  
+    })();
+
+
+  },[]);
+  if(register)return <Text>User already registed...</Text>
   return (
     <View style={styles.container}>
       <View style={[globStyle.flexItem, globStyle.alignCenter, globStyle.justifyCenter]}>
