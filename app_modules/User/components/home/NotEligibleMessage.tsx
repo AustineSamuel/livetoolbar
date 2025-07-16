@@ -8,29 +8,59 @@ import { getErrorMessage } from '@/utils/getErrorMesage';
 import { docQr } from '@/Logics/docQr';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '@/store/notificationSlice';
+import useUser from '@/hooks/useUser';
+import chargeUser from '../../logic/chargeUser';
+import { AddData } from '@/Logics/addData';
+import { getCurrentTimestamp } from '@/Logics/DateFunc';
 
 const NotEligibleMessage = () => {
   const [register,setRegister]=useState<boolean>(false);
   const [working,setWorking]=useState<boolean>(false);
   const [error,setError]=useState<string>("");
   const dispatch=useDispatch();
+  const user=useUser();
   const registerUserToSeeJobs=async ()=>{
 try{
 //add users to see jobs list
-  dispatch(showNotification({ message: 'Action successful!', type: 'success' }));
 
 const exist=await docQr("users-to-jobs",{
-
+whereClauses:[
+  {
+    field:"userId",
+    operator:"==",
+    value:user?.userId||""
+  }
+]
 });
 if(exist?.length == 0 ){
-  console.log("should add users")
+  // console.log("should add users")
+  // chargeUser and add user
+const res=  await chargeUser(1500,user?.userId||"");
+if(res?.error)dispatch(showNotification({message:res?.error,type:"error"}))
+const res1=await AddData("users-to-jobs",{
+userId:user?.userId,
+addedAt:getCurrentTimestamp(),
+paid:true
+})
+dispatch(showNotification({
+  "message":"Job registration successful",
+  type:"success"
+}));
+
 }
 else{
-  //end.
+ dispatch(showNotification({
+  "message":"Registration already exist",
+  type:"success"
+}))
 }
 }
 catch(err:any){
 setError(getErrorMessage(err))
+dispatch(showNotification({
+  message:getErrorMessage(err),
+  type:"error"
+}))
 }
 finally{
   setWorking(false);

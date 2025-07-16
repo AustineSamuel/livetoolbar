@@ -8,6 +8,8 @@ import { showNotification } from "@/store/notificationSlice";
 import { getErrorMessage } from "@/utils/getErrorMesage";
 import { docQr } from "@/Logics/docQr";
 import { setUser } from "@/store/slices";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { replaceUndefined } from "@/utils/funcs";
 export function isEmail(value: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(value);
@@ -38,8 +40,10 @@ const [loading,setLoading]=useState<boolean>(false);
               ]
             });
             const searchByEmailUser=searchByEmail?.[0];
-if(searchByEmailUser){
+            console.log(searchByEmailUser,typeof searchByEmailUser);
+if(searchByEmailUser && searchByEmailUser!==undefined){
   dispatch(setUser(searchByEmailUser))
+  await AsyncStorage.setItem("User",JSON.stringify(searchByEmailUser))
   dispatch(showNotification({
     message:"Login successful",
     type:"success"
@@ -63,8 +67,10 @@ if(searchByEmailUser){
               ]
             })
             const searchByUsernameUser=searchByUsername?.[0];
-if(searchByUsernameUser){
+if(searchByUsernameUser && searchByUsernameUser!==undefined){
+
   dispatch(setUser(searchByUsernameUser))
+  await AsyncStorage.setItem("User",JSON.stringify(searchByUsername));
   dispatch(showNotification({
     message:"Login successful",
     type:"success"

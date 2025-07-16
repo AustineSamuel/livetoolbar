@@ -24,6 +24,6 @@ export const formatTimestamp = (input: any): string => {
 
   export const replaceUndefined=(str: any): string => {
   return str.replace(/undefined/g, '');
-};
+}
   
 export const addHTTPPath=(path: string): string =>path?.includes("http") ? path : `${baseURL}/${path}`

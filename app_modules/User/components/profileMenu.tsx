@@ -2,7 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Ionicons, MaterialCommunityIcons, Feather, MaterialIcons } from '@expo/vector-icons';
-
+import useUser from '@/hooks/useUser';
+import BR from '@/utils/BR';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setUser } from '@/store/slices';
+import { useDispatch } from 'react-redux';
+import { router } from 'expo-router';
 interface MenuItem {
   label: string;
   icon: React.ReactNode;
@@ -14,6 +19,8 @@ interface Props {
 }
 
 export default function ProfileMenu({ isSideNav = false }: Props) {
+  const user=useUser();
+  const dispatch=useDispatch();
   const items: MenuItem[] = [
     { label: 'Edit Personal Info', icon: <FontAwesome name="user" size={20} />, onPress: () => {} },
     { label: 'Bank Account', icon: <FontAwesome name="bank" size={20} />, onPress: () => {} },
@@ -36,7 +43,7 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
           style={styles.avatar}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.name}>Austine Samuel</Text>
+          <Text style={styles.name}>{user?.username}</Text>
           <View style={styles.tierRow}>
             <View style={styles.tierBadge}>
               <Text style={styles.tierText}>Tier 0</Text>
@@ -69,11 +76,16 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
       {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.version}>LiveToolBar - Customer Version 1.0.84</Text>
-        <TouchableOpacity style={styles.logout}>
+        <TouchableOpacity onPress={async ()=>{
+await AsyncStorage.clear();
+dispatch(setUser(null));
+router.replace("/screens/login");
+        }} style={styles.logout}>
           <FontAwesome name="sign-out" size={20} color="red" />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
+      <BR height={50}/>
     </ScrollView>
   );
 }

@@ -3,6 +3,16 @@ export interface User{
     fullname:string,
     email:string,
     password:string,
-    type:"Vendor"|"User",
+    NIN:string,
+    photo:string,
+    createdAt:string,
+    updated:string,
+    passwordChangedAt:string,
+    recentPasswords:string[],
+    userId:string,
+    balance:number,
+    balance_before:number,
+    balance_updatedAt:string,
+    docId?:string 
     
 }

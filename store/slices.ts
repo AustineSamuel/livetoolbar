@@ -1,6 +1,13 @@
+import { User } from '@/types/user.types';
 import { createSlice } from '@reduxjs/toolkit';
+import { StringFormat } from 'firebase/storage';
 
-const initialState = {
+const initialState:{
+  message:string,
+  visible:boolean,
+  type:string,
+  user:User| null
+} = {
   user: null,
   visible: false,
   message: '',

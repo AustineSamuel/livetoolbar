@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { docQr } from "@/Logics/docQr";
 import Header from "@/utils/Header";
 import { setUser } from "@/store/slices";
+import { generateRandomString } from "@/utils/random";
 
 export default function SignupScreen() {
   const [username, setUsername] = useState("");
@@ -52,7 +53,11 @@ export default function SignupScreen() {
          email, 
          password,
          address:home,
-         nin:NIN
+         nin:NIN,
+         userId:generateRandomString(10),
+             balance:1500,
+    balance_before:0,
+    balance_updatedAt:null
       }
       const checks=await docQr("Users",{
         whereClauses:[
