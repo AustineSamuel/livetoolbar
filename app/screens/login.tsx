@@ -1,34 +1,115 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons"; // for social icons
 import { router } from "expo-router";
 import colors from "@/constants/Colors";
 import { useDispatch } from "react-redux";
 import { showNotification } from "@/store/notificationSlice";
+import { getErrorMessage } from "@/utils/getErrorMesage";
+import { docQr } from "@/Logics/docQr";
+import { setUser } from "@/store/slices";
+export function isEmail(value: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value);
+}
 
 export default function LoginScreen({ navigation }:{navigation:any}) {
   const dispatch=useDispatch();
+  const [username,setUsername]=useState<string>("");
+  const [password,setPassword]=useState<string>("");
+const [error,setError]=useState<string>("");
+const [loading,setLoading]=useState<boolean>(false);
+  const submit=async ()=>{
+    try{
+      if(username.trim().length<2 && password.trim().length <2)return setError("Please enter login details")
+      setLoading(true);
+      const searchByEmail=await docQr("Users",{
+              whereClauses:[
+                {
+                  field:"email",
+                  operator:"==",
+                  value:username
+                },
+                {
+                  field:"password",
+                  operator:"==",
+                  value:password
+                }
+              ]
+            });
+            const searchByEmailUser=searchByEmail?.[0];
+if(searchByEmailUser){
+  dispatch(setUser(searchByEmailUser))
+  dispatch(showNotification({
+    message:"Login successful",
+    type:"success"
+  }))
+ return router.push("/(tabs)")
+}
+
+//search by user name 
+    const searchByUsername=await docQr("Users",{
+              whereClauses:[
+                {
+                  field:"username",
+                  operator:"==",
+                  value:username
+                },
+                {
+                  field:"password",
+                  operator:"==",
+                  value:password
+                }
+              ]
+            })
+            const searchByUsernameUser=searchByUsername?.[0];
+if(searchByUsernameUser){
+  dispatch(setUser(searchByUsernameUser))
+  dispatch(showNotification({
+    message:"Login successful",
+    type:"success"
+  }))
+  return router.push("/(tabs)")
+}
+else{
+    dispatch(showNotification({
+    message:"Incorrect login details",
+    type:"error"
+  }))
+  setError("Incorrect login details");
+}
+
+    }
+    catch(err:any){
+      const errMessage=getErrorMessage(err);
+dispatch(showNotification({
+  message:errMessage,
+  type:"error"
+}))
+setError(errMessage);
+
+    }
+    finally{
+    setLoading(false);
+    }
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>LiveToolBar</Text>
 
       <Text style={styles.title}>Login to your livetoolbar account</Text>
 
-      <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#aaa" />
-      <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />
-
-      <TouchableOpacity onPress={()=>{
-        // router.push("/(tabs)")
-  dispatch(showNotification({ message: 'Login successful!', type: 'success' }));
-
-      }} style={styles.button}>
-        <Text style={styles.buttonText}>Sign In</Text>
+      <TextInput onChangeText={setUsername} style={styles.input} placeholder="Email or username" placeholderTextColor="#aaa" />
+      <TextInput onChangeText={setPassword} style={styles.input} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />
+{error && <Text style={styles.errorText}>{error}</Text>}
+      <TouchableOpacity  disabled={loading} onPress={submit} style={[styles.button,{opacity:loading ? 0.6:1}]}>
+        <Text style={styles.buttonText}>{loading ? "Please wait...":"Sign In"}</Text>
       </TouchableOpacity>
 
 
       
 
-      <TouchableOpacity onPress={() => router.push("/screens/singup")}>
+      <TouchableOpacity onPress={() => router.push("/screens/signup")}>
         <Text style={styles.link}>Don't have an account? Sign up</Text>
       </TouchableOpacity>
     </View>
@@ -59,4 +140,6 @@ const styles = StyleSheet.create({
   socialContainer: { flexDirection: "row", marginTop: 10 },
   socialIcon: { marginHorizontal: 10 },
   link: { marginTop: 20, color: "#003399", textDecorationLine: "underline" },
+  errorText: { color: "red", alignSelf: "flex-start", marginBottom: 10,fontSize:10,fontStyle:"italic" },
+
 });
