@@ -6,6 +6,7 @@ import { formatToNaira } from '@/Logics/date';
 import { LinearGradient } from 'expo-linear-gradient';
 import colors from '@/constants/Colors';
 import useUser from '@/hooks/useUser';
+import { router } from 'expo-router';
 
 const HomeWalletCard: React.FC<{isWalletScreen?:boolean}> = ({isWalletScreen}) => {
   const [showBalance, setShowBalance] = useState(true);
@@ -35,7 +36,11 @@ const user=useUser()
         {showBalance ? `${formatToNaira(balance,true)}` : '****'}
       </Text>
 
-      <TouchableOpacity style={styles.fundButton}>
+      <TouchableOpacity 
+      onPress={()=>{
+                      router.push("/screens/fundwallet")
+                    }}
+                     style={styles.fundButton}>
         <Text style={styles.fundText}>Fund Wallet</Text>
       </TouchableOpacity>
 </View>

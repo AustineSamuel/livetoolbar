@@ -29,6 +29,9 @@ const globStyle = StyleSheet.create({
         position: 'absolute',
         bottom: 30,
   },
+  link:{
+color:colors?.primaryColorDarker
+  },
   buttonText:{
      color: '#fff',
     fontSize: 16,

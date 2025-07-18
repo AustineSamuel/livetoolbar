@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import HomeHeader from '../components/HomeHeader';
-import HomeWalletCard from '../components/home-wallet-card';
 import BR from '@/utils/BR';
-import globStyle, { height } from '@/glob/style';
+import globStyle from '@/glob/style';
 import fakeTransactions from '../static-data/transactions.data';
 import TransactionItem from '../components/Wallet/transactionCard';
 import { generateUniqueString } from '@/Logics/date';
 import useUser from '@/hooks/useUser';
 import { formatToNaira } from '../../../Logics/date';
 import colors from '@/constants/Colors';
+import { router } from 'expo-router';
 
 
 const Wallet: React.FC = () => {
@@ -26,7 +26,9 @@ const Wallet: React.FC = () => {
           }]}>{formatToNaira(user?.balance||0,true)}</Text>
         
         
-              <TouchableOpacity style={style.fundButton}>
+              <TouchableOpacity onPress={()=>{
+                router.push("/screens/fundwallet")
+              }} style={style.fundButton}>
                 <Text style={style.fundText}>Fund Wallet</Text>
               </TouchableOpacity>
         
