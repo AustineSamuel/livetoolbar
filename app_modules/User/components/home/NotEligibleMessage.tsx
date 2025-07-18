@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const NotEligibleMessage = () => {
   const [register,setRegister]=useState<boolean>(false);
   const [working,setWorking]=useState<boolean>(false);
+  const [loading,setLoading]=useState<boolean>(true);
   const [error,setError]=useState<string>("");
   const dispatch=useDispatch();
   const user=useUser();
@@ -76,6 +77,8 @@ finally{
 
   useEffect(()=>{
     (async ()=>{
+      try{
+      setLoading(true);
       const res=await docQr("users-to-jobs",{
         whereClauses:[
           {
@@ -86,12 +89,18 @@ finally{
         ]
       });
 setRegister((res?.[0]) ? true:false)
-  
+      setLoading(false);
+    }
+    catch(err:any){
+      setError(getErrorMessage(err));
+    }
+    finally{
+      setLoading(false);
+    }
     })();
-
-
-  },[]);
+  },[user?.userId]);
   if(register)return <Text>User already registed...</Text>
+  if(loading )return <Text>Loading Jobs....</Text>
   return (
     <View style={styles.container}>
       <View style={[globStyle.flexItem, globStyle.alignCenter, globStyle.justifyCenter]}>

@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import colors from '@/constants/Colors';
 import useUser from '@/hooks/useUser';
 
-const HomeWalletCard: React.FC = () => {
+const HomeWalletCard: React.FC<{isWalletScreen?:boolean}> = ({isWalletScreen}) => {
   const [showBalance, setShowBalance] = useState(true);
 const user=useUser()
   const balance =user?.balance||0; // Example balance
