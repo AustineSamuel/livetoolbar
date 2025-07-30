@@ -1,0 +1,10 @@
+Dear Apple Developer Support,
+I hope this message finds you well.
+I am writing to formally request the conversion of my Apple Developer account from an individual account to an organization account. We are in the process of submitting an app that represents our organization, and per App Store Review Guidelines, the app must be submitted through a developer account enrolled as an organization.
+Below are the relevant details:
+Apple ID / Email: iouplcng@gmail.com
+Current Account Type: Individual
+Organization Name: Glopilots
+Website: https://glopilots.com
+We kindly ask that you guide us through the process or assist with converting our account accordingly. If any further information or verification is required, we would be happy to provide it.
+Thank you for your support and assistance.

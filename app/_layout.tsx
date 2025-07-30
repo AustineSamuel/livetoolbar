@@ -7,6 +7,8 @@ import 'react-native-reanimated';
 import { Provider } from 'react-redux';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { store } from '@/store';
+import { SheetProvider } from "react-native-actions-sheet";
+
 import AnimatedNotification from '@/app_modules/User/components/animatedNotifications';
 export {
   // Catch any errors thrown by the Layout component.
@@ -55,6 +57,8 @@ setFinished(true);
 function RootLayoutNav() {
   return (<>
   <Provider store={store}>
+    <SheetProvider>
+
     <SafeAreaProvider>
       <SafeAreaView style={{flex:1}}>
     <AnimatedNotification />
@@ -65,6 +69,8 @@ function RootLayoutNav() {
         </Stack>
       </SafeAreaView>
     </SafeAreaProvider>
+    </SheetProvider>
+
     </Provider>
 </>
   );

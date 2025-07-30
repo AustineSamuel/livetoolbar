@@ -1,3 +1,4 @@
+import ServiceProvidersScreen from '@/app_modules/screens/ServiceProviders'
 import { service } from '@/app_modules/static-data/services'
 import Header from '@/utils/Header'
 import { useLocalSearchParams, useRouter } from 'expo-router'
@@ -9,9 +10,7 @@ const ServiceProviders:React.FC = () => {
 
   const parsedItem:service = item ? JSON.parse(item as string) : null;
   return (
-    <View>
-<Header title={parsedItem.name+" services"}/>
-    </View>
+    <ServiceProvidersScreen/>
   )
 }
 

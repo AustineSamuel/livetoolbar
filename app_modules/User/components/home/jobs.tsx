@@ -4,6 +4,7 @@ import { ButtonItem } from '../../../../utils/verticalButtons';
 import colors from '@/constants/Colors';
 import globStyle, { screenPadding } from '@/glob/style';
 import NotEligibleMessage from './NotEligibleMessage';
+import { router } from 'expo-router';
 
 const Jobs:React.FC = () => {
 const [notEligible,setNotEligible]=useState<boolean>(true);
@@ -11,7 +12,9 @@ const [notEligible,setNotEligible]=useState<boolean>(true);
     <View style={{backgroundColor:colors?.white,borderRadius:15,padding:10}}>
       <View style={[globStyle.flexItem,globStyle.alignCenter,{justifyContent:'space-between'}]}>
         <Text style={{fontWeight:"bold",color:colors?.black,fontSize:20}}>Jobs</Text>
-      <TouchableOpacity style={styles.hireButton}>
+      <TouchableOpacity onPress={()=>{
+        router.push("/screens/HireAWorker")
+      }} style={styles.hireButton}>
         <Text style={styles.hireButtonText}>Hire a worker</Text>
       </TouchableOpacity>
       </View>
