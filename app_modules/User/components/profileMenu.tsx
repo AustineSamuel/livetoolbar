@@ -75,7 +75,7 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Text style={styles.version}>LiveToolBar - Customer Version 1.0.84</Text>
+        <Text style={styles.version}>LifeToolBar - Customer Version 1.0.84</Text>
         <TouchableOpacity onPress={async ()=>{
 await AsyncStorage.clear();
 dispatch(setUser(null));

@@ -100,9 +100,9 @@ setError(errMessage);
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>LiveToolBar</Text>
+      <Text style={styles.logo}>LifeToolBar</Text>
 
-      <Text style={styles.title}>Login to your livetoolbar account</Text>
+      <Text style={styles.title}>Login to your lifetoolbar account</Text>
 
       <TextInput onChangeText={setUsername} style={styles.input} placeholder="Email or username" placeholderTextColor="#aaa" />
       <TextInput onChangeText={setPassword} style={styles.input} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />

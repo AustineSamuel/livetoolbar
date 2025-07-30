@@ -48,7 +48,7 @@ const Fundwallet = () => {
         </Text>
         <BR height={5}/>
         <TouchableHighlight onPress={()=>{
-            LINKING.openURL("https://livetoolbar.com/terms")
+            LINKING.openURL("https://lifetoolbar.com/terms")
         }} underlayColor={colors?.lightGray}>
             <Text style={globStyle.link}>Read terms and consitions</Text>
         </TouchableHighlight>

@@ -1,13 +1,14 @@
 import { User } from '@/types/user.types';
 import { createSlice } from '@reduxjs/toolkit';
 import { StringFormat } from 'firebase/storage';
-
-const initialState:{
+ 
+export interface appstate{
   message:string,
   visible:boolean,
   type:string,
   user:User| null
-} = {
+}
+const initialState:appstate = {
   user: null,
   visible: false,
   message: '',

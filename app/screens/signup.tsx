@@ -116,7 +116,7 @@ dispatch(showNotification({
   <Header title="Signup"/>
     <View style={styles.container}>
     
-      <Text style={styles.title}>Create your livetoolbar account</Text>
+      <Text style={styles.title}>Create your lifetoolbar account</Text>
 
       <TextInput
         style={styles.input}

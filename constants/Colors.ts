@@ -32,6 +32,7 @@ const ColorsLightAndDark= {
 export const colors={
   ...(ColorsLightAndDark[(SecureStorage.getItem("mode")||"light") as "light" |"dark"]),
   primaryColor:"#63C8FF",
+  grey:"#9997ab",
   primaryColorDarker:"#154f6e",
   secondaryColor:"#FEEBF6",
 }
