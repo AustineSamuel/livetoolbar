@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUser } from '@/store/slices';
 import { useDispatch } from 'react-redux';
 import { router } from 'expo-router';
+import colors from '@/constants/Colors';
 interface MenuItem {
   label: string;
   icon: React.ReactNode;
@@ -22,17 +23,23 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
   const user=useUser();
   const dispatch=useDispatch();
   const items: MenuItem[] = [
-    { label: 'Edit Personal Info', icon: <FontAwesome name="user" size={20} />, onPress: () => {} },
+    { label: 'Edit Personal Info', icon: <FontAwesome name="user" size={20} />, onPress: () => {
+      router.push("/screens/editProfileInfo")
+    } },
+   
     { label: 'Bank Account', icon: <FontAwesome name="bank" size={20} />, onPress: () => {} },
-    { label: 'Verification', icon: <MaterialCommunityIcons name="shield-check" size={20} />, onPress: () => {} },
-    { label: 'Pin and Biometric', icon: <MaterialIcons name="fingerprint" size={20} />, onPress: () => {} },
+    // { label: 'Verification', icon: <MaterialCommunityIcons name="shield-check" size={20} />, onPress: () => {} },
+    // { label: 'Pin and Biometric', icon: <MaterialIcons name="fingerprint" size={20} />, onPress: () => {} },
     { label: 'Refer a friend/family', icon: <MaterialCommunityIcons name="account-group-outline" size={20} />, onPress: () => {} },
+    { label: 'Become a Provider', icon: <Feather name="user-plus" size={20} />, onPress: () => {
+      router.push("/screens/ApplyAsServiceProvider")
+    } },
     { label: 'FAQ', icon: <FontAwesome name="question-circle-o" size={20} />, onPress: () => {} },
     { label: 'Privacy Policy', icon: <Feather name="lock" size={20} />, onPress: () => {} },
     { label: 'Support', icon: <Ionicons name="chatbubble-ellipses-outline" size={20} />, onPress: () => {} },
     { label: 'Terms And Condition', icon: <Feather name="file-text" size={20} />, onPress: () => {} },
     { label: 'Share App', icon: <FontAwesome name="share-alt" size={20} />, onPress: () => {} },
-    { label: 'Delete account', icon: <MaterialCommunityIcons name="delete-outline" size={20} />, onPress: () => {} },
+    { label: 'Delete account', icon: <MaterialCommunityIcons name="delete-outline" size={20} />, onPress: () => {router.push("/screens/deleteAccount")} },
   ];
 
   return (

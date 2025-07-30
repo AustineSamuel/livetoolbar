@@ -35,6 +35,7 @@ export const colors={
   grey:"#9997ab",
   primaryColorDarker:"#154f6e",
   secondaryColor:"#FEEBF6",
+  danger:'#bc2222'
 }
 
 export default colors;

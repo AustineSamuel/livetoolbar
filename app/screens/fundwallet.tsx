@@ -1,11 +1,23 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import Header from '@/utils/Header';
 import { MonnifyReservedAccount } from '@/app_modules/types/monify.types';
 import colors from '@/constants/Colors';
 import globStyle from '@/glob/style';
 import BR from '@/utils/BR';
-import * as LINKING from "expo-linking";
+import * as LINKING from 'expo-linking';
+import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
+import { useDispatch } from 'react-redux';
+import { showNotification } from '@/store/notificationSlice';
+
 const mockData: MonnifyReservedAccount = {
   accountReference: 'tapnob-08123456789',
   accountName: 'Tapnob Wallet Funding',
@@ -29,16 +41,55 @@ const mockData: MonnifyReservedAccount = {
 };
 
 const Fundwallet = () => {
+  const dispatch = useDispatch();
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const copy = async (text: string, index: number) => {
+    try {
+      await Clipboard.setStringAsync(text);
+      setCopiedIndex(index);
+
+      dispatch(showNotification({ message: 'Copied!', type: 'success' }));
+
+      setTimeout(() => setCopiedIndex(null), 3000);
+    } catch (error) {
+      dispatch(
+        showNotification({ message: 'Failed to copy. Try again.', type: 'error' })
+      );
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <Header title="Fund Wallet" />
       <View style={styles.container}>
-        <Text style={styles.title}>To fund your wallet, transfer to any of the following accounts:</Text>
+        <Text style={styles.title}>
+          To fund your wallet, transfer to any of the following accounts:
+        </Text>
 
         {mockData.accounts.map((account, index) => (
           <View key={index} style={styles.accountCard}>
             <Text style={styles.bankName}>{account.bankName}</Text>
-            <Text style={styles.accountNumber}>{account.accountNumber}</Text>
+            <View
+              style={[
+                globStyle.flexItem,
+                globStyle.alignCenter,
+                globStyle.flexBetween,
+              ]}
+            >
+              <Text style={styles.accountNumber}>{account.accountNumber}</Text>
+              <TouchableOpacity
+                style={styles.copyBtn}
+                onPress={() => copy(account.accountNumber, index)}
+              >
+                {copiedIndex === index ? (
+                  <FontAwesome5 name="check-double" size={18} color={colors.primaryColor} />
+                ) : (
+                  <Feather size={18} name="copy" color="#444" />
+                )}
+              </TouchableOpacity>
+            </View>
+
             <Text style={styles.accountName}>{mockData.accountName}</Text>
           </View>
         ))}
@@ -46,11 +97,16 @@ const Fundwallet = () => {
         <Text style={styles.note}>
           ⚠️ Funds sent to these accounts will reflect in your wallet automatically.
         </Text>
-        <BR height={5}/>
-        <TouchableHighlight onPress={()=>{
-            LINKING.openURL("https://lifetoolbar.com/terms")
-        }} underlayColor={colors?.lightGray}>
-            <Text style={globStyle.link}>Read terms and consitions</Text>
+
+        <BR height={5} />
+
+        <TouchableHighlight
+          onPress={() => {
+            LINKING.openURL('https://lifetoolbar.com/terms');
+          }}
+          underlayColor={colors.lightGray}
+        >
+          <Text style={globStyle.link}>Read terms and conditions</Text>
         </TouchableHighlight>
       </View>
     </View>
@@ -94,4 +150,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#666',
   },
+    copyBtn: {
+    backgroundColor: '#f6efef',
+    borderRadius: 4,
+    padding: 8,
+    marginLeft: 10,
+  },
+
 });

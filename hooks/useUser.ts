@@ -11,7 +11,6 @@ const dispatch=useDispatch();
 useEffect(()=>{
 if(props?.user)setUser_(props?.user);
 },[props?.user]);
-console.log(props?.user);
 // useEffect(()=>{
 // (async ()=>{
 // if(!props?.user){
