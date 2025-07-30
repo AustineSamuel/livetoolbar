@@ -1,3 +1,8 @@
+export interface service{
+  name:string,
+  image:string,
+  serviceId:string
+}
 export const servicesData = [
   {
     name: "Plumber",
@@ -74,4 +79,4 @@ export const servicesData = [
     image: "https://cdn-icons-png.flaticon.com/512/2942/2942583.png",
     serviceId: "service_015",
   },
-];
+]

@@ -65,11 +65,11 @@ export default function TabLayout() {
       />
 
             <Tabs.Screen
-        name="profile"
+        name="messages"
         options={{
-          title: 'Profile',
+          title: 'Messages',
            tabBarIcon:({focused})=>{
-            return <FontAwesome5 name={`user${focused ? "-alt":""}`}  style={{color:colors.primaryColorDarker}}  size={20}/>
+            return <MaterialCommunityIcons name={`message-processing${focused ? "":"-outline"}`}  style={{color:colors.primaryColorDarker}}  size={20}/>
            }
         }}
         

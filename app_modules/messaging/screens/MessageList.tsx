@@ -26,31 +26,31 @@ export interface messagingData{
 }
 const MessageList = () => {
 const user=useUser();
-    const buttons:ButtonItem[]=useMemo(()=>{
-return [
-    {
-        name:"All messages",
-        active:true,
-        clickEvent:()=>{
-            console.log("fire....")
-        }
-    },
-    {
-        name:"Unread",
-        active:true,
-        clickEvent:()=>{
-            console.log("fire....")
-        }
-    },
-    {
-        name:"Blocked",
-        active:true,
-        clickEvent:()=>{
-            console.log("fire....")
-        }
-    }
-]
-    },[]);
+//     const buttons:ButtonItem[]=useMemo(()=>{
+// return [
+//     {
+//         name:"All messages",
+//         active:true,
+//         clickEvent:()=>{
+//             console.log("fire....")
+//         }
+//     },
+//     {
+//         name:"Unread",
+//         active:true,
+//         clickEvent:()=>{
+//             console.log("fire....")
+//         }
+//     },
+//     {
+//         name:"Blocked",
+//         active:true,
+//         clickEvent:()=>{
+//             console.log("fire....")
+//         }
+//     }
+// ]
+//     },[]);
 
 
     const [messagingData,setMessagingData]=useState<messagingData>({
@@ -88,7 +88,7 @@ if(messagingData){
 <Header  title={"Messages"}/>
 <View style={{paddingHorizontal:16,backgroundColor:colors.white}}>
     <BR height={10}/>
-<VerticalButtons items={buttons}/>
+{/* <VerticalButtons items={buttons}/> */}
     </View>
     <ScrollView style={{backgroundColor:colors.white}}>
 {loadingMessages ? [1,2,3,4,5,6,7,8].map((i)=><MessagesItemSkeleton key={i}/>):relationships.map((message:messages_relationShips,i:number)=>{
@@ -118,7 +118,7 @@ key={i}
 
     </View>
     <Text  style={{textAlign:"center",color:colors.grey,paddingHorizontal:60}}>
-        Messages you sent or sent to you will appear here</Text>
+        All Messages from Lifetoolbar will appear here</Text>
     </View>}
     </ScrollView> 
     </>

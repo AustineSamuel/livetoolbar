@@ -3,6 +3,7 @@ import React from 'react';
 import { servicesData } from '@/app_modules/static-data/services';
 import colors from '@/constants/Colors';
 import globStyle from '@/glob/style';
+import { router } from 'expo-router';
 
 const Services: React.FC = () => {
   return (
@@ -16,7 +17,12 @@ const Services: React.FC = () => {
         keyExtractor={(item) => item.serviceId}
         numColumns={4}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={()=>{
+          router.push({
+      pathname: "/screens/ServiceProviders",
+      params: { item: JSON.stringify(item) },
+    });
+          }}>
             <View style={[globStyle.flexItem,globStyle.justifyCenter]}>
             <Image source={{ uri: item.image }} style={styles.image} />
 </View>
