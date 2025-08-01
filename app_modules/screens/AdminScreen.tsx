@@ -9,7 +9,9 @@ const AdminScreen = () => {
     { title: 'Edit Services', icon: <Ionicons name="construct" size={24} color="#fff" /> ,onPress:()=>{
         router.push("/screens/ManageServices");
     }},
-    { title: 'Users', icon: <Ionicons name="people" size={24} color="#fff" /> },
+    { title: 'Users', icon: <Ionicons name="people" size={24} color="#fff" />,onPress:()=>{
+      router.push("/screens/Users")
+    } },
     { title: 'Jobs', icon: <Ionicons name="briefcase" size={24} color="#fff" /> },
     { title: 'Sourcing Services', icon: <MaterialIcons name="design-services" size={24} color="#fff" /> },
   ];
