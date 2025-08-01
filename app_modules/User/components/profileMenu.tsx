@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    backgroundColor: '#8000ff',
+    backgroundColor:colors.primaryColor,
     padding: 16,
     borderRadius: 12,
     gap:5,

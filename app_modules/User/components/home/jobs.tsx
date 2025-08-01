@@ -5,6 +5,7 @@ import colors from '@/constants/Colors';
 import globStyle, { screenPadding } from '@/glob/style';
 import NotEligibleMessage from './NotEligibleMessage';
 import { router } from 'expo-router';
+import { JobsScreen } from '../Jobs';
 
 const Jobs:React.FC = () => {
 const [notEligible,setNotEligible]=useState<boolean>(true);
@@ -18,10 +19,8 @@ const [notEligible,setNotEligible]=useState<boolean>(true);
         <Text style={styles.hireButtonText}>Hire a worker</Text>
       </TouchableOpacity>
       </View>
-      {notEligible && <NotEligibleMessage/>}
-      <View>
-
-      </View>
+      {notEligible ? <NotEligibleMessage/>:<JobsScreen/>}
+     
     </View>
   )
 }
