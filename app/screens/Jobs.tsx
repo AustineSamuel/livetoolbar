@@ -12,10 +12,12 @@ const Jobs = () => {
    <>
    <Header title={`Jobs `}/>
    <JobsScreen isAdmin/>
-   <MyButton onPress={()=>{
+   
+   <View style={{padding:10}}><MyButton onPress={()=>{
     router.push("/screens/createJob");
    }} style={{backgroundColor:colors.primaryColorDarker,borderRadius:10}}>
     <Text style={{color:colors.white}}>Create Job</Text></MyButton>
+</View>
    </>
   )
 }

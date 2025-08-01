@@ -12,6 +12,16 @@ import {
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import Header from '@/utils/Header'
+import { uploadImage } from '@/lib/upload'
+import { useDispatch } from 'react-redux'
+import { showNotification } from '@/store/notificationSlice'
+import { getErrorMessage } from '@/utils/getErrorMesage'
+import { Job } from '@/app_modules/User/components/Jobs'
+import { getCurrentTimestamp } from '@/Logics/DateFunc'
+import { generateUniqueString } from '@/Logics/date'
+import { AddData } from '@/Logics/addData'
+import { collection } from 'firebase/firestore'
+import { db } from '@/firebase.config'
 
 const CreateJobScreen = () => {
   const [title, setTitle] = useState('')
@@ -50,8 +60,8 @@ const CreateJobScreen = () => {
   const removeImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index))
   }
-
-  const submitJob = () => {
+const dispatch=useDispatch();
+  const submitJob = async () => {
     if (!title.trim()) {
       Alert.alert('Validation', 'Please enter a title.')
       return
@@ -64,18 +74,46 @@ const CreateJobScreen = () => {
       Alert.alert('Validation', 'Please upload at least one image.')
       return
     }
-
+try{
     setLoading(true)
     // TODO: Upload images and save job data to backend / Firebase
 
-    setTimeout(() => {
-      setLoading(false)
-      Alert.alert('Success', 'Job created successfully!')
-      // Clear form
+      let img=[];
+      for (let i = 0; i < images.length; i++) {
+        const element = images[i]
+        const {url}=await uploadImage(element);
+        img.push(url);
+      }
+const job:Job={
+createdAt:getCurrentTimestamp(),
+descriptions:description,
+title,
+updatedAt:getCurrentTimestamp(),
+id:generateUniqueString(10),
+images:img
+}
+const send_Data=await AddData(collection(db,"Jobs"),job);
+
       setTitle('')
       setDescription('')
       setImages([])
-    }, 2000)
+    dispatch(showNotification({
+      message:"Job created successfully",
+      type:"success"
+    }));
+
+    }
+    catch(err:any){
+dispatch(showNotification({
+  message:getErrorMessage(err),
+  type:"error"
+}))
+    }
+    finally{
+      setImages([]);
+      setLoading(false);
+    }
+
   }
 
   return (
