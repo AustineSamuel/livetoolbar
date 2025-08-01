@@ -1,6 +1,7 @@
 export interface service{
   name:string,
   image:string,
+  docId?:string,
   serviceId:string
 }
 export const servicesData = [

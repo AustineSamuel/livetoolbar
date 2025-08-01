@@ -8,8 +8,10 @@ import { Provider } from 'react-redux';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { store } from '@/store';
 import { SheetProvider } from "react-native-actions-sheet";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import AnimatedNotification from '@/app_modules/User/components/animatedNotifications';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -59,6 +61,8 @@ function RootLayoutNav() {
   <Provider store={store}>
     <SheetProvider>
 
+  <BottomSheetModalProvider>
+   <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
       <SafeAreaView style={{flex:1}}>
     <AnimatedNotification />
@@ -69,6 +73,8 @@ function RootLayoutNav() {
         </Stack>
       </SafeAreaView>
     </SafeAreaProvider>
+   </GestureHandlerRootView>
+  </BottomSheetModalProvider>
     </SheetProvider>
 
     </Provider>
