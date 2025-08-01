@@ -9,6 +9,7 @@ import { setUser } from '@/store/slices';
 import { useDispatch } from 'react-redux';
 import { router } from 'expo-router';
 import colors from '@/constants/Colors';
+import * as LINKING from 'expo-linking';
 interface MenuItem {
   label: string;
   icon: React.ReactNode;
@@ -46,23 +47,25 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
     <ScrollView style={[styles.container,{marginTop:isSideNav? -60:0}]}>
       <View style={styles.header}>
         <Image
-          source={{ uri: 'https://i.pravatar.cc/100' }} // Replace with your image
+          source={{ uri: user?.photo||"https://img.icons8.com/?size=100&id=13042&format=png&color=000000"}} // Replace with your image
           style={styles.avatar}
         />
         <View style={styles.userInfo}>
           <Text style={styles.name}>{user?.username}</Text>
-          <View style={styles.tierRow}>
+          {/* <View style={styles.tierRow}>
             <View style={styles.tierBadge}>
               <Text style={styles.tierText}>Tier 0</Text>
             </View>
             <Text style={styles.rating}>Ratings: 3 ⭐</Text>
-          </View>
+          </View> */}
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: '50%' }]} />
           </View>
           <Text style={styles.progressText}>50% COMPLETE</Text>
         </View>
-        <TouchableOpacity style={styles.chatBtn}>
+        <TouchableOpacity onPress={()=>{
+          LINKING.openURL("https://wa.me/2348135170922")
+        }}  style={styles.chatBtn}>
           <Ionicons name="logo-whatsapp" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -106,6 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#8000ff',
     padding: 16,
     borderRadius: 12,
+    gap:5,
     flexDirection: 'row',
     alignItems: 'center',
   },

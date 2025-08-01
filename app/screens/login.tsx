@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons"; // for social icons
 import { router } from "expo-router";
 import colors from "@/constants/Colors";
@@ -10,6 +10,7 @@ import { docQr } from "@/Logics/docQr";
 import { setUser } from "@/store/slices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { replaceUndefined } from "@/utils/funcs";
+import BR from "@/utils/BR";
 export function isEmail(value: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(value);
@@ -100,6 +101,11 @@ setError(errMessage);
   }
   return (
     <View style={styles.container}>
+
+<View>
+  <Image style={{width:150,height:150,borderRadius:75}} source={require("../../assets/images/icon.png")}/>
+</View>
+
       <Text style={styles.logo}>LifeToolBar</Text>
 
       <Text style={styles.title}>Login to your lifetoolbar account</Text>
@@ -107,6 +113,10 @@ setError(errMessage);
       <TextInput onChangeText={setUsername} style={styles.input} placeholder="Email or username" placeholderTextColor="#aaa" />
       <TextInput onChangeText={setPassword} style={styles.input} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />
 {error && <Text style={styles.errorText}>{error}</Text>}
+ <TouchableOpacity style={{marginTop:-10,width:"100%"}} onPress={() => router.push("/screens/forgotten-password")}>
+        <Text style={{textAlign:"left",width:"100%"}}>Forgotten password</Text>
+      </TouchableOpacity>
+<BR height={5}/>
       <TouchableOpacity  disabled={loading} onPress={submit} style={[styles.button,{opacity:loading ? 0.6:1}]}>
         <Text style={styles.buttonText}>{loading ? "Please wait...":"Sign In"}</Text>
       </TouchableOpacity>

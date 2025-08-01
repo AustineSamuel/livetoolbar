@@ -1,6 +1,6 @@
 import * as SecureStorage from "expo-secure-store";
 export const secureStorage= SecureStorage;
-const tintColorLight = '#2f95dc';
+const tintColorLight = 'hsla(182, 64%, 52%, 1)';
 const tintColorDark = '#fff';
 
 const ColorsLightAndDark= {
@@ -31,9 +31,9 @@ const ColorsLightAndDark= {
 
 export const colors={
   ...(ColorsLightAndDark[(SecureStorage.getItem("mode")||"light") as "light" |"dark"]),
-  primaryColor:"#63C8FF",
+  primaryColor:"hsla(182, 64%, 52%, 1)",
   grey:"#9997ab",
-  primaryColorDarker:"#154f6e",
+  primaryColorDarker:"hsla(201, 64%, 16%, 1)2, 64%, 52%, 1)",
   secondaryColor:"#FEEBF6",
   danger:'#bc2222'
 }

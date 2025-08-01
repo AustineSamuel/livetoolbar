@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { router } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import colors from "@/constants/Colors"; // Make sure colors.primaryColor exists
@@ -116,6 +116,10 @@ dispatch(showNotification({
   <Header title="Signup"/>
     <View style={styles.container}>
     
+    <View>
+      <Image style={{width:150,height:150,borderRadius:75}} source={require("../../assets/images/icon.png")}/>
+    </View>
+
       <Text style={styles.title}>Create your lifetoolbar account</Text>
 
       <TextInput
