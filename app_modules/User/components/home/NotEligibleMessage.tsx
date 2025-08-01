@@ -16,6 +16,7 @@ import { collection } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { setUser } from '@/store/slices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { JobsScreen } from '../Jobs';
 
 const NotEligibleMessage = () => {
   const [register,setRegister]=useState<boolean>(false);
@@ -99,7 +100,7 @@ setRegister((res?.[0]) ? true:false)
     }
     })();
   },[user?.userId]);
-  if(register)return <Text>User already registed...</Text>
+  if(register)return <JobsScreen/>
   if(loading )return <Text>Loading Jobs....</Text>
   return (
     <View style={styles.container}>

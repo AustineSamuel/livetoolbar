@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   View,
   Text,
@@ -10,10 +10,13 @@ import {
   TextInput,
   Button,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native'
 import Header from '@/utils/Header'
-import { router } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import colors from '@/constants/Colors'
+import { getErrorMessage } from '@/utils/getErrorMesage'
+import { docQr } from '@/Logics/docQr'
 
 export interface Job {
   id: string
@@ -56,13 +59,13 @@ const fakeJobs: Job[] = [
 ]
 
 export const JobsScreen: React.FC<JobsProps> = ({ isAdmin }) => {
-  const [jobs, setJobs] = useState<Job[]>(fakeJobs)
+  const [jobs, setJobs] = useState<Job[]>([])
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
   const [editMode, setEditMode] = useState<'edit' | 'delete' | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editDescription, setEditDescription] = useState('')
-
+const [loading,setLoading]=useState<boolean>(true);
   const openEditModal = (job: Job) => {
     setSelectedJob(job)
     setEditTitle(job.title)
@@ -76,6 +79,26 @@ export const JobsScreen: React.FC<JobsProps> = ({ isAdmin }) => {
     setEditMode('delete')
     setModalVisible(true)
   }
+  const [error,setError]=useState<string>("");
+
+  const fetchData=async ()=>{
+    try{
+setError("");
+const data=await docQr("Jobs");
+setJobs(data);
+    }
+    catch(err:any){
+    setError(getErrorMessage(err));
+    }
+    finally{
+      setLoading(false);
+    }
+  }
+
+
+  useFocusEffect(useCallback(()=>{
+    fetchData()
+  },[]));
 
   const saveEdit = () => {
     if (!selectedJob) return
@@ -124,7 +147,10 @@ export const JobsScreen: React.FC<JobsProps> = ({ isAdmin }) => {
       ):(
          <View style={styles.actions}>
           <TouchableOpacity style={[styles.editBtn,{backgroundColor:colors.primaryColor}]} onPress={() =>{
-            router.push("/screens/ApplyAsServiceProvider")
+            router.push({
+              pathname:"/screens/ApplyJobs",
+              params:{job:JSON.stringify(item)} as any
+          })
           }}>
             <Text style={styles.btnText}>Apply</Text>
           </TouchableOpacity>
@@ -143,7 +169,7 @@ export const JobsScreen: React.FC<JobsProps> = ({ isAdmin }) => {
         renderItem={renderJob}
         contentContainerStyle={{ paddingBottom: 100 }}
       />
-
+{loading  && <ActivityIndicator size={20}/>}
       {/* Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalBackground}>
