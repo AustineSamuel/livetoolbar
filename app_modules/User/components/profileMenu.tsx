@@ -42,11 +42,16 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
     { label: 'Become a Provider', icon: <Feather name="user-plus" size={20} />, onPress: () => {
       router.push("/screens/ApplyAsServiceProvider")
     } },
-    { label: 'FAQ', icon: <FontAwesome name="question-circle-o" size={20} />, onPress: () => {} },
-    { label: 'Privacy Policy', icon: <Feather name="lock" size={20} />, onPress: () => {} },
+    { label: 'FAQ', icon: <FontAwesome name="question-circle-o" size={20} />, onPress: () => {
+      router.push("/screens/faq")
+    } },
+    { label: 'Privacy Policy', icon: <Feather name="lock" size={20} />, onPress: () => {
+      router.push("/screens/privacyPolicy")
+    } },
     { label: 'Support', icon: <Ionicons name="chatbubble-ellipses-outline" size={20} />, onPress: () => {} },
-    { label: 'Terms And Condition', icon: <Feather name="file-text" size={20} />, onPress: () => {} },
-    { label: 'Share App', icon: <FontAwesome name="share-alt" size={20} />, onPress: () => {} },
+    { label: 'Terms And Condition', icon: <Feather name="file-text" size={20} />, onPress: () => {
+      router.push("/screens/terms")
+    } },
     { label: 'Delete account', icon: <MaterialCommunityIcons name="delete-outline" size={20} />, onPress: () => {router.push("/screens/deleteAccount")} },
   ];
 

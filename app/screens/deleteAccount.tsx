@@ -1,20 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, Image } from 'react-native';
 import Header from '@/utils/Header';
 import MyButton from '@/utils/button'; // or use TouchableOpacity if you don't have MyButton
 import colors from '@/constants/Colors';
 import globStyle, { screenPadding } from '@/glob/style';
+import useUser from '@/hooks/useUser';
+import { deleteData } from '@/Logics/deleteData';
+import { useDispatch } from 'react-redux';
+import { showNotification } from '@/store/notificationSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setUser } from '@/store/slices';
+import { router } from 'expo-router';
 
 const DeleteAccount = () => {
+  const user=useUser();
+  const dispatch=useDispatch();
+  const [deleting,setDeleting]=useState<boolean>(false);
   const handleDelete = () => {
     Alert.alert(
       'Confirm Deletion',
       'Are you sure you want to permanently delete your account? This action cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => {
+        { text: 'Delete', style: 'destructive', onPress: async() => {
           // TODO: Implement delete logic here
-          console.log("Account deleted");
+          // console.log("Account deleted");
+          setDeleting(true);
+          await deleteData("Users",user?.docId||"");
+          dispatch(showNotification({
+            message:"account deleted successfully",
+            type:"success"
+          }));
+          await AsyncStorage.clear();
+         dispatch(setUser(null));
+         router.push("/screens/oboarding");
+          setDeleting(false);
         }},
       ]
     );
@@ -39,9 +59,11 @@ const DeleteAccount = () => {
         </Text>
 
         <MyButton
-          label="Delete My Account"
-          onPress={handleDelete}
-          style={{ backgroundColor: colors.danger || 'red',borderRadius:30}}
+          label={deleting? "Please wait...":"Delete My Account"}
+
+          onPress={deleting ? ()=>{}:handleDelete}
+          style={{ backgroundColor: colors.danger || 'red',borderRadius:30,opacity:deleting? 0.6:1}}
+          
         />
       </View>
     </>
