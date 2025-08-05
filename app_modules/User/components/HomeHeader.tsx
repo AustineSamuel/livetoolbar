@@ -5,8 +5,8 @@ import { AntDesign, Ionicons } from '@expo/vector-icons'
 import { DrawerToggleButton } from '@react-navigation/drawer'
 import { router } from 'expo-router'
 import React from 'react'
+import { Image } from 'react-native'
 import { Pressable, View } from 'react-native'
-import { Avatar } from 'react-native-paper'
 
 const HomeHeader:React.FC=() => {
     
@@ -16,9 +16,9 @@ const HomeHeader:React.FC=() => {
 <View style={[globStyle.flexItem,globStyle.alignCenter,{gap:10}]}>
     <DrawerToggleButton />
     <Pressable onPress={()=>{
-        router.push("/(tabs)/profile")
+        router.push("/screens/editProfileInfo")
     }}>
-        <ImageAvatar   size={25} source={require("@/assets/images/user.jpeg")}/>
+        <Image style={{width:25,height:25}} source={require("@/assets/images/user.jpeg")}/>
     </Pressable>
 </View>
 
