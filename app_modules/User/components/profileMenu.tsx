@@ -28,13 +28,17 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
       router.push("/screens/editProfileInfo")
     } },
    
-    { label: 'Bank Account', icon: <FontAwesome name="bank" size={20} />, onPress: () => {} },
+    { label: 'Bank Account', icon: <FontAwesome name="bank" size={20} />, onPress: () => {
+      router.push("/screens/fundwallet")
+    } },
     { label: 'Admin', icon: <FontAwesome name="sort-amount-desc" size={20} />, onPress: () => {
       router.push("/screens/admin");
     } },
     // { label: 'Verification', icon: <MaterialCommunityIcons name="shield-check" size={20} />, onPress: () => {} },
     // { label: 'Pin and Biometric', icon: <MaterialIcons name="fingerprint" size={20} />, onPress: () => {} },
-    { label: 'Refer a friend/family', icon: <MaterialCommunityIcons name="account-group-outline" size={20} />, onPress: () => {} },
+    { label: 'Refer a friend/family', icon: <MaterialCommunityIcons name="account-group-outline" size={20} />, onPress: () => {
+      router.push("/screens/referAFriend")
+    } },
     { label: 'Become a Provider', icon: <Feather name="user-plus" size={20} />, onPress: () => {
       router.push("/screens/ApplyAsServiceProvider")
     } },
