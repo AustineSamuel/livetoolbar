@@ -30,11 +30,11 @@ const Init:React.FC = () => {
         AsyncStorage.setItem("User",JSON.stringify(serverUser?.[0]));
       }
       else{
-router.push("/screens/login");
+router.push("/screens/oboarding");
       }
         return 
       }
-router.push("/screens/login");
+router.push("/screens/oboarding");
      })();
 
     },[])

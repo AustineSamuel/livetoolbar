@@ -92,7 +92,8 @@ export default function ProfileMenu({ isSideNav = false }: Props) {
         <TouchableOpacity onPress={async ()=>{
 await AsyncStorage.clear();
 dispatch(setUser(null));
-router.replace("/screens/login");
+// router.replace("/screens/login");
+router.push("/screens/oboarding");
         }} style={styles.logout}>
           <FontAwesome name="sign-out" size={20} color="red" />
           <Text style={styles.logoutText}>Logout</Text>
