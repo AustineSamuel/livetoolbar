@@ -21,9 +21,6 @@ const HomeHeader:React.FC=() => {
         <Image style={{width:25,height:25}} source={require("@/assets/images/user.jpeg")}/>
     </Pressable>
 </View>
-
-
-
 <View style={[globStyle.flexItem,globStyle.alignCenter,{gap:10}]}>
     <Pressable onPress={()=>{
         router.push("/screens/notifications")
