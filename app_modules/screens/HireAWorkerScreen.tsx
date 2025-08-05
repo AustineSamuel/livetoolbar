@@ -82,7 +82,7 @@ const HireAWorkerScreen = () => {
   return (
     <>
       <Header title="Hire a Worker" />
-      <RenderError text="Quickly hire more workers using LiveToolbar." />
+      <RenderError text="Quickly hire more workers using LifeToolbar." />
 
       <ScrollView contentContainerStyle={styles.container}>
         <TextInput

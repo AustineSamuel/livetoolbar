@@ -112,7 +112,7 @@ if(loading)return <View  style={[{padding:screenPadding},globStyle.flexItem,glob
         <Text style={styles.heading}>Become a Verified Service Provider</Text>
         <Text style={styles.message}>
           Unlock exclusive access to top-paying jobs by becoming a verified
-          provider on LiveToolbar. Fill out your application form today.
+          provider on LifeToolbar. Fill out your application form today.
         </Text>
         <View style={styles.feeContainer}>
           <Text style={styles.feeLabel}>Application Fee:</Text>
