@@ -14,6 +14,14 @@ import Header from "@/utils/Header";
 import RenderError from "@/utils/renderError";
 import { User } from "@/types/user.types";
 import { height } from "@/glob/style";
+import useUser from "@/hooks/useUser";
+import { getCurrentTimestamp } from "@/Logics/DateFunc";
+import { AddData } from "@/Logics/addData";
+import { collection } from "firebase/firestore";
+import { db } from "@/firebase.config";
+import { useDispatch } from "react-redux";
+import { showNotification } from "@/store/notificationSlice";
+import { getErrorMessage } from "@/utils/getErrorMesage";
 
 export interface HireWorkers {
   uid: string;
@@ -23,13 +31,16 @@ export interface HireWorkers {
   ageStartFrom: number;
   ageFinishedMaximun: number;
   workers_location: string;
+  createdAt:string,
+  workerSelected?:User,
+  workSelectedAt?:string,
+  alreadyHired:boolean
 }
 
 const ageOptions = Array.from({ length: 53 }, (_, i) => i + 14); // 18 - 70
 
 const HireAWorkerScreen = () => {
   const [form, setForm] = useState({
-    uid: "",
     name: "",
     description: "",
     ageStartFrom: 0,
@@ -44,6 +55,7 @@ const HireAWorkerScreen = () => {
     setAgeType(type);
     setModalVisible(true);
   };
+  const user=useUser();
 
   const handleAgeSelect = (value: number) => {
     const key = ageType === "start" ? "ageStartFrom" : "ageFinishedMaximun";
@@ -55,29 +67,42 @@ const HireAWorkerScreen = () => {
     setForm({ ...form, [key]: value });
   };
 
-  const handleSubmit = () => {
+  const [neededWorkers,setNeededWorkers]=useState<boolean>(false);
+  const dispatch=useDispatch();
+  const handleSubmit = async () => {
     const hireData: HireWorkers = {
       ...form,
-      user: {
-        username: "mockuser",
-        fullname: "Mock User",
-        email: "mock@example.com",
-        password: "",
-        NIN: "123456789",
-        photo: "",
-        createdAt: "",
-        updated: "",
-        passwordChangedAt: "",
-        recentPasswords: [],
-        userId: "mock-uid",
-        balance: 0,
-        balance_before: 0,
-        balance_updatedAt: "",
-      },
-    };
+      createdAt:getCurrentTimestamp(),
+    uid: user?.userId||"",
+      user:user as User,
+      alreadyHired:false
+    }
+    setNeededWorkers(true)
+  console.log(hireData);
+  try{
+  await AddData(collection(db,"WorkersNeeded"),{
+    ...hireData
+  });
+dispatch(showNotification({
+  message:"✅ Request sent to LifeToolBar successfully, we’ll get in touch with you shortly.",
+  type:"success"
+}));
+setForm({
+    name: "",
+    description: "",
+    ageStartFrom: 0,
+    ageFinishedMaximun: 0,
+    workers_location: "",
+});
 
-    console.log("Submitted data:", hireData);
-  };
+  }
+  catch(err:any){
+    dispatch(showNotification({message:getErrorMessage(err),type:"error"}));
+  }
+  finally{
+    setNeededWorkers(false);
+  }
+  }
 
   return (
     <>
@@ -85,12 +110,7 @@ const HireAWorkerScreen = () => {
       <RenderError text="Quickly hire more workers using LifeToolbar." />
 
       <ScrollView contentContainerStyle={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Worker UID"
-          value={form.uid}
-          onChangeText={(text) => handleChange("uid", text)}
-        />
+    
         <TextInput
           style={styles.input}
           placeholder="Job Title / Name"
@@ -126,7 +146,7 @@ const HireAWorkerScreen = () => {
         />
 
         <View style={styles.buttonWrapper}>
-          <Button title="Submit" onPress={handleSubmit} />
+          <Button disabled={neededWorkers} title={neededWorkers ? "Please wait...":"Submit"} onPress={handleSubmit} />
         </View>
       </ScrollView>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   View,
   Text,
@@ -12,13 +12,27 @@ import {
   Platform,
 } from 'react-native'
 import Header from '@/utils/Header'
-import {  router, useLocalSearchParams } from 'expo-router'
+import {  router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import { collection } from 'firebase/firestore'
+import { db } from '@/firebase.config'
+import { AddData } from '@/Logics/addData'
+import useUser from '@/hooks/useUser'
+import { getCurrentTimestamp } from '@/Logics/DateFunc'
+import { JobApplication } from './job_applications'
+import { User } from '@/types/user.types'
+import { useDispatch } from 'react-redux'
+import { showNotification } from '@/store/notificationSlice'
+import { getErrorMessage } from '@/utils/getErrorMesage'
+import { docQr } from '@/Logics/docQr'
+import { WhereClause } from '../../Logics/docQr';
+import RenderJobApplicationStatus from '@/app_modules/Vendor/components/JobStatus'
 
 interface Job {
   title: string
   images: string[]
   descriptions: string
   createdAt: string
+  id:string,
   updatedAt: string
 }
 
@@ -26,7 +40,35 @@ const ApplyJobs = () => {
   const params = useLocalSearchParams()
   const [job, setJob] = useState<Job | null>(null)
   const [coverLetter, setCoverLetter] = useState('')
-
+const [existingApplication,setExistingApplication]=useState<JobApplication>();
+const [loading,setLoading]=useState<boolean>(true);
+const [error,setError]=useState<string>("");
+const init=async(job:Job,userId:string)=>{
+  console.log("init called....")
+  try{
+const _=await docQr("AppliedJobs",{
+  whereClauses:[
+    {
+      field:"uid",
+    operator:"==",
+    value:userId
+    },
+    {
+      field:"jobId",
+      operator:"==",
+      value:job?.id
+    }
+  ]
+})
+setExistingApplication(_?.[0]);
+  }
+  catch(err:any){
+setError(getErrorMessage(err));
+  }
+  finally{
+setLoading(false);
+  }
+}
   useEffect(() => {
     if (params?.job) {
       try {
@@ -38,18 +80,50 @@ const ApplyJobs = () => {
     }
   }, [params?.job])
 
-  const submitApplication = () => {
+
+const user=useUser();
+
+  useFocusEffect(useCallback(()=>{//check if user aready applied
+if(user?.userId && job)init(job,user?.userId||"");
+  },[user,job]));
+
+const dispatch=useDispatch();
+  const [submitting,setSubmitting]=useState<boolean>(false);
+  const submitApplication = async() => {
     if (!coverLetter.trim()) {
       Alert.alert('Validation', 'Please write a cover letter.')
       return
     }
-    // TODO: handle apply logic here (upload to backend / firebase)
-    Alert.alert('Success', 'Application submitted!')
+    try{
+      const jobApplicationData:JobApplication={
+   person:user as User,
+    uid:user?.userId||"",
+    appliedAt:getCurrentTimestamp(),
+    coverLetter,
+    jobId:job?.id||"",
+    amHired: false
+      }
+      setSubmitting(true);
+    await AddData(collection(db,"AppliedJobs"),jobApplicationData);
+    router.back();
+    dispatch(showNotification({
+      message:"Job Applications submitted successfully",
+      type:"success"
+    }))
     setCoverLetter('')
+    }
+    catch(err:any){
     router.back()
+    }
+    finally{
+      setSubmitting(false);
+    }
   }
-
-  if (!job) {
+if(existingApplication){
+  return <><Header title={"Apply "}/><RenderJobApplicationStatus myApplication={existingApplication}/></>
+}
+  
+  if (!job || loading) {
     return (
       <View style={styles.center}>
         <Text>Loading job details...</Text>
@@ -85,8 +159,8 @@ const ApplyJobs = () => {
             onChangeText={setCoverLetter}
           />
 
-          <TouchableOpacity style={styles.submitBtn} onPress={submitApplication}>
-            <Text style={styles.submitBtnText}>Submit Application</Text>
+          <TouchableOpacity style={styles.submitBtn} onPress={submitApplication} disabled={submitting}>
+            <Text style={styles.submitBtnText}>{submitting ? "please wait...":"Submit Application"}</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

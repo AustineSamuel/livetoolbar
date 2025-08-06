@@ -17,6 +17,7 @@ import { router, useFocusEffect } from 'expo-router'
 import colors from '@/constants/Colors'
 import { getErrorMessage } from '@/utils/getErrorMesage'
 import { docQr } from '@/Logics/docQr'
+import globStyle from '@/glob/style'
 
 export interface Job {
   id: string
@@ -126,6 +127,7 @@ setJobs(data);
 
   const renderJob = ({ item }: { item: Job }) => (
     <View style={styles.jobCard}>
+      <View style={[globStyle.flexItem,globStyle.alignCenter]}>
       <Image source={{ uri: item.images[0] }} style={styles.jobImage} />
       <View style={{ flex: 1, marginLeft: 12 }}>
         <Text style={styles.jobTitle}>{item.title}</Text>
@@ -134,7 +136,7 @@ setJobs(data);
         </Text>
        
       </View>
-
+</View>
       {isAdmin ?  (
         <View style={styles.actions}>
           <TouchableOpacity style={styles.editBtn} onPress={() => openEditModal(item)}>
@@ -142,6 +144,16 @@ setJobs(data);
           </TouchableOpacity>
           <TouchableOpacity style={styles.deleteBtn} onPress={() => openDeleteModal(item)}>
             <Text style={styles.btnText}>Delete</Text>
+          </TouchableOpacity>
+             <TouchableOpacity style={[styles.deleteBtn,{
+              backgroundColor:colors.primaryColor
+             }]} onPress={() => {
+              router.push({
+                pathname:"/screens/job_applications",
+                params:{job:JSON.stringify(item)}
+              })
+             }}>
+            <Text style={styles.btnText}>applications</Text>
           </TouchableOpacity>
         </View>
       ):(
@@ -222,11 +234,9 @@ setJobs(data);
 
 const styles = StyleSheet.create({
   jobCard: {
-    flexDirection: 'row',
     padding: 12,
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
-    alignItems: 'center',
   },
   jobImage: {
     width: 80,
@@ -249,13 +259,15 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
+    display:'flex',
+    justifyContent:'flex-end',
+    gap:10
   },
   editBtn: {
     backgroundColor: '#4caf50',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 16,
-    marginRight: 8,
   },
   deleteBtn: {
     backgroundColor: '#f44336',
