@@ -16,6 +16,7 @@ import { db } from "@/firebase.config";
 import ProviderApplicationForm from "./ProviderApplicationForm";
 import chargeUser from '../../app_modules/User/logic/chargeUser';
 import { useFocusEffect } from "expo-router";
+import { User } from "@/types/user.types";
 
 export type JobsUids=string
 export interface ProvidersService{
@@ -23,7 +24,16 @@ export interface ProvidersService{
     NIN:string,
     uploadedAt:string,
     appliedJobs:JobsUids[],
-    uid:string
+    username:string,
+    userProfilePic:string
+  uid:string,
+  approved:boolean,
+  approvedAt:string,
+  declined:boolean,
+  declinedAt:string,
+  reasonForDeclined:string,
+  user:User,
+  docId?:string
 }
 
 

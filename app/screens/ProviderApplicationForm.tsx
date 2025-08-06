@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Modal,
   ScrollView,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import MyButton from "@/utils/button";
@@ -18,14 +19,19 @@ import { getErrorMessage } from "@/utils/getErrorMesage";
 import { collection } from "firebase/firestore";
 import { db } from "@/firebase.config";
 import globStyle, { height, screenPadding } from "@/glob/style";
-import { servicesData } from "@/app_modules/static-data/services";
+import { service, servicesData } from "@/app_modules/static-data/services";
 import { Entypo } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { docQr } from "@/Logics/docQr";
+import useUser from "@/hooks/useUser";
+import { ProvidersService } from "./ApplyAsServiceProvider";
+import { formatTimestamp } from "@/utils/funcs";
+import moment from "moment";
+import RenderProviderResponseMessage from "@/app_modules/Vendor/components/renderProviderResponseMessage";
+import { uploadFile } from '../../Logics/upload';
+import { uploadImage } from "@/lib/upload";
 
-export interface service {
-  name: string;
-  image: string;
-  serviceId: string;
-}
+
 
 interface Props {
   existingFormData: any;
@@ -39,15 +45,43 @@ const ProviderApplicationForm: React.FC<Props> = ({ existingFormData, onSuccess 
   const [certificates, setCertificates] = useState<string[]>([]);
   const [nin, setNin] = useState<string>("");
   const [pleaseWait, setPleaseWait] = useState(false);
+  const [loading,setLoading]=useState<boolean>(false);
+  const [alreadyApplied,setAlreadyApplied]=useState<ProvidersService | undefined>();
   const dispatch = useDispatch();
 
   const openServiceModal = () => setModalVisible(true);
   const closeServiceModal = () => setModalVisible(false);
-
+const user=useUser();
+  const init=async (userid:string)=>{
+    try{
+      setLoading(true);
+const _=await docQr("service_providers",{
+  whereClauses:[
+    {
+      field:"uid",
+      operator:"==",
+      value:userid
+    }
+  ]
+})
+setAlreadyApplied(_?.[0]);
+    }
+    catch(err:any){
+// console.error(err);
+setAlreadyApplied(undefined);
+    }
+    finally{
+setLoading(false);
+    }
+  }
   const handleSelectService = (srv: service) => {
     setSelectedService(srv);
     closeServiceModal();
   };
+
+  useEffect(()=>{
+if(user?.userId)init(user?.userId);
+  },[user]);
 
   const pickCertificates = async () => {
     try {
@@ -83,19 +117,37 @@ const ProviderApplicationForm: React.FC<Props> = ({ existingFormData, onSuccess 
 
     try {
       setPleaseWait(true);
-      await AddData(collection(db, "service_providers_forms"), {
+      const ninUrl=!nin.includes("https") ? await uploadImage(nin):nin;
+      let certificationsUrls:string[]=[];
+      for (let i = 0; i < certificates.length-1; i++) {
+        const ctfct = certificates?.[i];
+        console.log(ctfct);
+        if(!ctfct)continue
+        if(!ctfct?.includes("https")){
+          const {url}=await uploadImage(ctfct);
+          certificationsUrls.push(url);
+        }
+      }
+      await AddData(collection(db, "service_providers"), {
         ...existingFormData,
         jobUid: selectedService.serviceId,
-        certifications: certificates,
-        NIN: nin,
+        certifications: certificationsUrls,
+        NIN: ninUrl,
+        approved:false,
+        approvedAt:"",
+        uid:user?.userId,
+  declined:false,
+  declinedAt:"",
+  reasonForDeclined:"",
+  user
       });
-
       dispatch(showNotification({
         message: "Application submitted successfully",
         type: "success",
       }));
 
       onSuccess?.();
+      router.push("/(tabs)")
     } catch (err: any) {
       dispatch(showNotification({
         message: getErrorMessage(err),
@@ -105,7 +157,10 @@ const ProviderApplicationForm: React.FC<Props> = ({ existingFormData, onSuccess 
       setPleaseWait(false);
     }
   };
-
+  if(loading)return <View style={{flex:1,padding:30,height:height,marginTop:40}}>
+<ActivityIndicator size={20}/>
+  </View>
+if(alreadyApplied)return <RenderProviderResponseMessage alreadyApplied={alreadyApplied}/>
   return (
     <View style={{ padding: screenPadding }}>
       <Text style={styles.heading}>Complete Your Application</Text>
@@ -160,7 +215,7 @@ const ProviderApplicationForm: React.FC<Props> = ({ existingFormData, onSuccess 
 
       <MyButton
         label={pleaseWait ? "Submitting..." : "Submit Application"}
-        onPress={handleSubmit}
+        onPress={pleaseWait ? ()=>1:handleSubmit}
         style={{ backgroundColor: colors.primaryColor }}
       />
     </View>

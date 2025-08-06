@@ -104,7 +104,7 @@ const ChatScreen = () => {
       // }
       // else {
       setNewBusiness(businessData)
-      setBusinessModalWarning(true)
+      // setBusinessModalWarning(true)
 
       // }
       //we have a new business

@@ -19,6 +19,10 @@ const AdminScreen = () => {
       router.push("/screens/createJob")
     } },
     { title: 'Sourcing Services', icon: <MaterialIcons name="design-services" size={24} color="#fff" /> },
+    { title: 'Manage Providers', icon: <Ionicons name="person-add-sharp" size={24} color="#fff" /> ,
+  onPress:()=>{
+    router.push("/screens/manageProvders")
+  }},
   ];
 
   return (
