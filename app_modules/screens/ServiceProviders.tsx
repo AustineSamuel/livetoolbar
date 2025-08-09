@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Header from "@/utils/Header";
 import { fakeProviders } from "@/faker/workers";
@@ -16,11 +17,39 @@ import globStyle from "@/glob/style";
 import colors from "@/constants/Colors";
 import { useLocalSearchParams } from "expo-router";
 import { service } from "../static-data/services";
+import { getErrorMessage } from "@/utils/getErrorMesage";
+import { docQr } from "@/Logics/docQr";
 
 
 const ServiceProvidersScreen = () => {
   const [search, setSearch] = useState("");
-const [data,setData]=useState<ServiceProviders[]>([...fakeProviders,...fakeProviders,...fakeProviders,...fakeProviders]);
+const [data,setData]=useState<ServiceProviders[]>([]);
+
+const [loading,setLoading]=useState<boolean>(true);
+const [error,setError]=useState<string|null>(null);
+const fetchProviders=async (item:service)=>{
+try{
+  setLoading(true);
+  const resdata=await docQr("service_providers",{
+    whereClauses:[
+      {
+        field:"serviceId",
+        operator:"==",
+        value:item.serviceId
+      }
+    ]
+  })
+  setData(resdata);
+setLoading(false);
+}
+catch(err:any){
+setError(getErrorMessage(err.message));
+}
+finally{
+setLoading(false);
+}
+}
+
 
   const filteredData = data.filter((provider) =>
     provider.user.fullname.toLowerCase().includes(search.toLowerCase()) ||
@@ -29,11 +58,15 @@ const [data,setData]=useState<ServiceProviders[]>([...fakeProviders,...fakeProvi
   )
   const { item } = useLocalSearchParams();
 
-  const parsedItem:service = item ? JSON.parse(item as string) : null;
+  const parsedItem:service = useMemo(() => item ? JSON.parse(item as string) : null, [item]);
+  useEffect(()=>{
+if(parsedItem){
+  fetchProviders(parsedItem);
+}
+  },[parsedItem]);
   return (
     <>
     <Header title={parsedItem.name+" services"}/>
-
       <View style={styles.container}>
         <TextInput
           placeholder={`Search ${parsedItem.name}s...`}
@@ -41,6 +74,12 @@ const [data,setData]=useState<ServiceProviders[]>([...fakeProviders,...fakeProvi
           value={search}
           onChangeText={setSearch}
         />
+{loading ? <View style={{padding:20}}><ActivityIndicator size="large" color={colors.primaryColor} /></View> : null}
+      {!loading && filteredData.length === 0 && (
+        <View style={{ padding: 20 }}>
+          <Text style={{textAlign:'center'}}>No results found</Text>
+        </View>
+      )}
 
         <FlatList
           data={filteredData}

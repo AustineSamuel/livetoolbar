@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -80,8 +80,7 @@ const ManageProviderStatusScreen = () => {
         },
       ]
     );
-  };
-
+  }
  const ApproveProvider = (uid: string) => {
     Alert.alert(
       'Approve Provider',
@@ -174,6 +173,7 @@ const ManageProviderStatusScreen = () => {
       )
   );
 
+ 
   if (loading) {
     return (
       <View
@@ -188,6 +188,7 @@ const ManageProviderStatusScreen = () => {
       </View>
     );
   }
+// console.log(filteredProviders[0]);
 
   return (
     <>
@@ -222,11 +223,13 @@ const ManageProviderStatusScreen = () => {
                   <View>
                     <Text style={styles.name}>{item.user?.fullname}</Text>
                     <Text style={styles.username}>@{item.user?.username}</Text>
+                                    <Text style={styles.username}>{item.service?.name}</Text>
+
                     <Text style={styles.statusText}>
-                      Status:{' '}
+                      {item.approved || item.declined ? 'Status: ' :null}
                       {item.approved
                         ? `✅ Approved on ${moment(item.approvedAt).format('YYYY-MM-DD')}`
-                        : `❌ Declined on ${moment(item.declinedAt).format('YYYY-MM-DD')}`}
+                        : item.declined?`❌ Declined on ${moment(item.declinedAt).format('YYYY-MM-DD')}`: null}
                     </Text>
                     {item.reasonForDeclined ? (
                       <Text style={styles.reasonText}>

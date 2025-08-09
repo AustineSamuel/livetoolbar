@@ -17,6 +17,7 @@ import ProviderApplicationForm from "./ProviderApplicationForm";
 import chargeUser from '../../app_modules/User/logic/chargeUser';
 import { useFocusEffect } from "expo-router";
 import { User } from "@/types/user.types";
+import { service } from "@/app_modules/static-data/services";
 
 export type JobsUids=string
 export interface ProvidersService{
@@ -33,7 +34,9 @@ export interface ProvidersService{
   declinedAt:string,
   reasonForDeclined:string,
   user:User,
-  docId?:string
+  docId?:string,
+  service:service,
+  serviceId:string
 }
 
 

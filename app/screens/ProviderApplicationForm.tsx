@@ -139,7 +139,9 @@ if(user?.userId)init(user?.userId);
   declined:false,
   declinedAt:"",
   reasonForDeclined:"",
-  user
+  user,
+  service:selectedService,
+  serviceId:selectedService.serviceId
       });
       dispatch(showNotification({
         message: "Application submitted successfully",

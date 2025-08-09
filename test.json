@@ -1,0 +1,33 @@
+{
+    "NIN": {
+        "message": "file uploaded successfully successful",
+        "url": "https://res.cloudinary.com/dms52tipw/image/upload/v1754501349/ekfflr2maquu7pymcl1n.jpg"
+    },
+    "approved": true,
+    "approvedAt": "2025-08-06 18:29:42",
+    "certifications": [
+        "https://res.cloudinary.com/dms52tipw/image/upload/v1754501350/hjj7fzmhtempul4obvbc.jpg"
+    ],
+    "declined": false,
+    "declinedAt": "",
+    "docId": "dLX8AhM2GTwqL8sYnl1s",
+    "jobUid": "service_001",
+    "reasonForDeclined": "",
+    "uid": "Y5jYRkOtXe",
+    "user": {
+        "NIN": "1223234545",
+        "address": "12 sds dfsd sdsd",
+        "balance": 2989000,
+        "balance_before": 2994000,
+        "balance_updatedAt": "2025-07-30 15:42:22",
+        "docId": "KKT48OFzEwIrkNzhBEBL",
+        "email": "test@gmail.com",
+        "fullname": "Test Dev",
+        "nin": "2323343434",
+        "password": "123456",
+        "photo": "https://res.cloudinary.com/dms52tipw/image/upload/v1754041250/mtry2gtweqkfhmjl5eqm.jpg",
+        "recentPasswords": [],
+        "userId": "Y5jYRkOtXe",
+        "username": "austinesamuel1"
+    }
+}
