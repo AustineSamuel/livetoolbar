@@ -19,6 +19,8 @@ import { useLocalSearchParams } from "expo-router";
 import { service } from "../static-data/services";
 import { getErrorMessage } from "@/utils/getErrorMesage";
 import { docQr } from "@/Logics/docQr";
+import { useSelector } from "react-redux";
+import { appstate } from "@/store/slices";
 
 
 const ServiceProvidersScreen = () => {
@@ -26,6 +28,7 @@ const ServiceProvidersScreen = () => {
 const [data,setData]=useState<ServiceProviders[]>([]);
 
 const [loading,setLoading]=useState<boolean>(true);
+const userAddress = useSelector((state: { app: appstate }) => state.app.userAddress);
 const [error,setError]=useState<string|null>(null);
 const fetchProviders=async (item:service)=>{
 try{
@@ -64,6 +67,10 @@ if(parsedItem){
   fetchProviders(parsedItem);
 }
   },[parsedItem]);
+
+  useEffect(()=>{
+console.log(userAddress);
+  },[userAddress]);
   return (
     <>
     <Header title={parsedItem.name+" services"}/>

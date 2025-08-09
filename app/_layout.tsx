@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import AnimatedNotification from '@/app_modules/User/components/animatedNotifications';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import UpdateAddressOnMovement from '@/app_modules/realtime/UpdateAddressOnMovement';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -65,6 +66,7 @@ function RootLayoutNav() {
    <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
       <SafeAreaView style={{flex:1}}>
+        <UpdateAddressOnMovement/>
     <AnimatedNotification />
        <Stack screenOptions={{headerShown:false}}>
          <Stack.Screen name="screens/init" options={{ headerShown: false }} />
