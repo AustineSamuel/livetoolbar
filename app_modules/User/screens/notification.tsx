@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import Header from '@/utils/Header';
-import { screenPadding } from '@/glob/style';
+import globStyle, { screenPadding } from '@/glob/style';
+import { docQr } from '@/Logics/docQr';
+import useUser from '@/hooks/useUser';
+import { getErrorMessage } from '@/utils/getErrorMesage';
+import colors from '@/constants/Colors';
 
 export interface notification {
   id: string;
+  userId:string
   message: string;
   title: string;
   image: string;
@@ -18,6 +23,7 @@ const fakeNotifications: notification[] = [
     message: 'Your electrician job request has been approved!',
     image: 'https://via.placeholder.com/50',
     sentAt: '2025-07-29T09:00:00',
+    userId:"user"
   },
   {
     id: '2',
@@ -25,6 +31,7 @@ const fakeNotifications: notification[] = [
     message: 'You just earned ₦500 for referring a friend!',
     image: 'https://via.placeholder.com/50',
     sentAt: '2025-07-28T12:30:00',
+    userId:"user"
   },
   {
     id: '3',
@@ -32,12 +39,40 @@ const fakeNotifications: notification[] = [
     message: 'Get 10% off your next hire this weekend!',
     image: 'https://via.placeholder.com/50',
     sentAt: '2025-07-27T18:45:00',
+    userId:"user"
+
   },
 ];
 
 const Notification = () => {
-  const [notifications] = useState<notification[]>(fakeNotifications); // set to [] to test empty state
-
+  const [notifications,setNotifications] = useState<notification[]>([]); // set to [] to test empty state
+const user=useUser();
+const [error,setError]=useState<string>("");
+const [loading,setLoading]=useState<boolean>(true);
+console.log(notifications);
+const fetchNotifications=async ()=>{
+  try{
+const _=await docQr("Notifications",{
+  whereClauses:[
+    {
+      field:"userId",
+      operator:"==",
+      value:user?.userId||""
+    }
+  ]
+});
+setNotifications(_);
+  }
+  catch(err:any){
+setError(getErrorMessage(err));
+  }
+  finally{
+setLoading(false)
+  }
+}
+useEffect(()=>{
+if(user)fetchNotifications();
+},[user]);
   const renderItem = ({ item }: { item: notification }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.image }} style={styles.image} />
@@ -47,12 +82,18 @@ const Notification = () => {
         <Text style={styles.date}>{new Date(item.sentAt).toLocaleString()}</Text>
       </View>
     </View>
-  );
+  )
 
   return (
     <View style={{ flex: 1 }}>
-      <Header title="Notification" />
+      <Header title="Notifications" />
       <View style={{ padding: screenPadding, flex: 1 }}>
+
+{error && <View style={[globStyle.flexItem,globStyle.alignCenter
+]}>
+  <Text style={{textAlign:'center',fontWeight:"bold",color:colors.danger}}>{error}</Text>
+  </View>}
+
         {notifications.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>📭 No notifications yet</Text>

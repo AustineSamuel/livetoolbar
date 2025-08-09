@@ -9,11 +9,22 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native'
 import Header from '@/utils/Header'
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'
-import { db } from '@/firebase.config' // Adjust to your Firebase config import
+import { db } from '@/firebase.config'
 import colors from '@/constants/Colors'
+import * as ImagePicker from 'expo-image-picker'
+import Modal from 'react-native-modal'
+import { AddData } from '@/Logics/addData'
+import { getCurrentTimestamp } from '@/Logics/DateFunc'
+import { notification } from '@/app_modules/User/screens/notification'
+import { generateUniqueString } from '@/Logics/date'
+import { useDispatch } from 'react-redux'
+import { showNotification } from '@/store/notificationSlice'
+import { uploadImage } from '@/lib/upload'
 
 export interface User {
   username: string
@@ -39,12 +50,18 @@ const UsersScreen = () => {
   const [searchText, setSearchText] = useState('')
   const [loading, setLoading] = useState(true)
 
-  // Fetch users from Firebase on mount
+  // Modal state
+  const [modalVisible, setModalVisible] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [notifTitle, setNotifTitle] = useState('')
+  const [notifMessage, setNotifMessage] = useState('')
+  const [notifImage, setNotifImage] = useState<string | null>(null)
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true)
-        const usersCol = collection(db, 'Users') // Make sure your collection name
+        const usersCol = collection(db, 'Users')
         const usersSnapshot = await getDocs(usersCol)
         const usersList = usersSnapshot.docs.map(docSnap => ({
           ...(docSnap.data() as User),
@@ -62,7 +79,6 @@ const UsersScreen = () => {
     fetchUsers()
   }, [])
 
-  // Filter users on searchText change
   useEffect(() => {
     if (!searchText.trim()) {
       setFilteredUsers(users)
@@ -80,45 +96,118 @@ const UsersScreen = () => {
 
   const handleDelete = (docId?: string) => {
     if (!docId) return
-    Alert.alert(
-      'Delete User',
-      'Are you sure you want to delete this user?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteDoc(doc(db, 'users', docId))
-              const updatedUsers = users.filter(u => u.docId !== docId)
-              setUsers(updatedUsers)
-              setFilteredUsers(updatedUsers)
-              Alert.alert('Success', 'User deleted successfully')
-            } catch (error) {
-              Alert.alert('Error', 'Failed to delete user')
-              console.error(error)
-            }
-          },
+    Alert.alert('Delete User', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteDoc(doc(db, 'Users', docId))
+            const updatedUsers = users.filter(u => u.docId !== docId)
+            setUsers(updatedUsers)
+            setFilteredUsers(updatedUsers)
+            Alert.alert('Success', 'User deleted successfully')
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete user')
+            console.error(error)
+          }
         },
-      ]
-    )
+      },
+    ])
+  }
+
+  const openNotificationModal = (user: User) => {
+    setSelectedUser(user)
+    setNotifTitle('')
+    setNotifMessage('')
+    setNotifImage(null)
+    setModalVisible(true)
+  }
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.8,
+    })
+    if (!result.canceled) {
+      setNotifImage(result.assets[0].uri)
+    }
+  }
+
+  const [sending,setSending]=useState<boolean>(false);
+  const dispatch=useDispatch();
+  const sendNotification = async () => {
+    if (!notifTitle.trim() || !notifMessage.trim()) {
+      Alert.alert('Error', 'Please fill in all fields')
+      return
+    }
+    try{
+      setSending(true);
+      // Here you can send to Firebase Cloud Messaging or backend
+      const {url}=await uploadImage(notifImage as string);
+      const notification:notification={
+        title: notifTitle,
+        message: notifMessage,
+        image: url,
+        userId: selectedUser?.userId as string,
+        sentAt: getCurrentTimestamp(),
+        id: generateUniqueString(10)
+      }
+
+      const _=await AddData(collection(db, 'Notifications'),notification);
+      setNotifTitle('')
+      setNotifMessage('')
+      setNotifImage(null);
+      setModalVisible(false);
+      dispatch(showNotification({
+        message: 'Notification sent successfully',
+        type: 'success'
+      }));
+    } catch (error) {
+      dispatch(showNotification({
+        message: 'Failed to send notification',
+        type: 'error'
+      }))
+      console.error(error)
+    }
+    finally {
+      setSending(false);
+    }
   }
 
   const renderUser = ({ item }: { item: User }) => (
     <View style={styles.userCard}>
-      <Image source={{ uri: item.photo||"https://img.icons8.com/?size=100&id=13042&format=png&color=000000" }} style={styles.photo} />
+      <Image
+        source={{
+          uri:
+            item.photo ||
+            'https://img.icons8.com/?size=100&id=13042&format=png&color=000000',
+        }}
+        style={styles.photo}
+      />
       <View style={{ flex: 1, marginLeft: 12 }}>
         <Text style={styles.username}>{item.username}</Text>
         <Text style={styles.fullname}>{item.fullname}</Text>
         <Text style={styles.email}>{item.email}</Text>
       </View>
-      <TouchableOpacity
-        style={styles.deleteBtn}
-        onPress={() => handleDelete(item.docId)}
-      >
-        <Text style={styles.deleteBtnText}>Delete</Text>
-      </TouchableOpacity>
+
+      <View>
+        <TouchableOpacity
+          style={styles.deleteBtn}
+          onPress={() => handleDelete(item.docId)}
+        >
+          <Text style={styles.deleteBtnText}>Delete</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.deleteBtn, { marginTop: 3, backgroundColor: colors.success }]}
+          onPress={() => openNotificationModal(item)}
+        >
+          <Text style={styles.deleteBtnText}>Notify</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 
@@ -148,6 +237,44 @@ const UsersScreen = () => {
           />
         )}
       </View>
+
+      {/* Bottom Sheet Modal */}
+      <Modal
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        style={{ justifyContent: 'flex-end', margin: 0 }}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalContent}
+        >
+          <Text style={styles.modalTitle}>Send Notification</Text>
+          <TextInput
+            placeholder="Title"
+            style={styles.input}
+            value={notifTitle}
+            onChangeText={setNotifTitle}
+          />
+          <TextInput
+            placeholder="Message"
+            style={[styles.input, { height: 80 }]}
+            value={notifMessage}
+            onChangeText={setNotifMessage}
+            multiline
+          />
+          <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+            {notifImage ? (
+              <Image source={{ uri: notifImage }} style={styles.previewImage} />
+            ) : (
+              <Text style={{ color: colors.primaryColor }}>+ Add Image</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity disabled={sending} style={[styles.sendBtn,{opacity:sending?0.5:1}]} onPress={sendNotification}>
+            <Text style={styles.sendBtnText}>{sending ? "Sending..." : "Send"}</Text>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </Modal>
     </>
   )
 }
@@ -156,7 +283,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor:colors.white,
+    backgroundColor: colors.white,
     paddingTop: 12,
   },
   searchInput: {
@@ -195,8 +322,52 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
+    textAlign: 'center',
   },
   deleteBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  modalContent: {
+    backgroundColor: colors.white,
+    padding: 16,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  input: {
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    height: 40,
+  },
+  imagePicker: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
+  sendBtn: {
+    backgroundColor: colors.primaryColor,
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  sendBtnText: {
     color: '#fff',
     fontWeight: 'bold',
   },
